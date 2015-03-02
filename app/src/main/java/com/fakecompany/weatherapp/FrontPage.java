@@ -1,7 +1,12 @@
 package com.fakecompany.weatherapp;
 
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,13 +21,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 //API KEY: c888e616376f2d4854883d881a0e07d4
 //http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=c888e616376f2d4854883d881a0e07d4
 
-public class FrontPage extends ActionBarActivity
+public class FrontPage extends ActionBarActivity implements WeatherPage.OnFragmentInteractionListener
 {
     public WeatherInfo currentInfo;
+    public List<WeatherPage> f = new ArrayList<WeatherPage>();
+    public int[] cityIds = new int[] {5037649, 5045360};
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,7 +39,20 @@ public class FrontPage extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_front_page);
 
-        new JsonRetriever().execute("http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=c888e616376f2d4854883d881a0e07d4");
+        f.add(WeatherPage.newInstance());
+        f.add(WeatherPage.newInstance());
+
+        for (int i = 0; i < cityIds.length; i++)
+        {
+            JsonRetriever retriever = new JsonRetriever();
+            retriever.linkedPage = f.get(i);
+            retriever.execute("http://api.openweathermap.org/data/2.5/weather?id=" + cityIds[i] + "&APPID=c888e616376f2d4854883d881a0e07d4");
+        }
+
+        ViewPager vp = (ViewPager) findViewById(R.id.vp_WeatherPager);
+        vp.setAdapter(new asd(getSupportFragmentManager(), f));
+
+        //new JsonRetriever().execute("http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=c888e616376f2d4854883d881a0e07d4");
     }
 
     @Override
@@ -51,58 +73,31 @@ public class FrontPage extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    class JsonRetriever extends AsyncTask<String, Void, String>
+    @Override
+    public void onFragmentInteraction(Uri uri)
     {
-        protected String doInBackground(String... urls)
-        {
-            try
-            {
-                URL url = new URL(urls[0]);
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String json = in.readLine();
-                in.close();
-                return json;
-            }
-            catch(Exception e)
-            {
-                Log.e("ASD", "Error retrieving JSON", e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String json)
-        {
-            parseJson(json);
-            updateScreen();
-        }
     }
 
-    public void parseJson(String json)
+    public class asd extends FragmentStatePagerAdapter
     {
-        currentInfo = new WeatherInfo();
+        public List<WeatherPage> pages;
 
-        try
+        public asd(FragmentManager fm, List<WeatherPage> _pages)
         {
-            JSONObject jObject = new JSONObject(json);
-            currentInfo.cityName = jObject.getString("name");
-            currentInfo.country = jObject.getJSONObject("sys").getString("country");
-            currentInfo.sunrise = jObject.getJSONObject("sys").getLong("sunrise");
-            currentInfo.sunset = jObject.getJSONObject("sys").getLong("sunrise");
-            currentInfo.currentTemp = jObject.getJSONObject("main").getDouble("temp");
-            currentInfo.minTemp = jObject.getJSONObject("main").getDouble("temp_min");
-            currentInfo.maxTemp = jObject.getJSONObject("main").getDouble("temp_max");
-            currentInfo.windSpeed = jObject.getJSONObject("wind").getDouble("speed");
-            currentInfo.windDirection = jObject.getJSONObject("wind").getDouble("deg");
+            super(fm);
+            pages = _pages;
         }
-        catch (Exception e)
-        {
-            Log.e("CV", "T", e);
-        }
-    }
 
-    public void updateScreen()
-    {
-        ((TextView)findViewById(R.id.cityName)).setText(currentInfo.cityName);
+        @Override
+        public Fragment getItem(int position)
+        {
+            return pages.get(position);
+        }
+
+        @Override
+        public int getCount()
+        {
+            return pages.size();
+        }
     }
 }

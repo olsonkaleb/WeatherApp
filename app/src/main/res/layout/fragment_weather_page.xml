@@ -1,0 +1,88 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FrontPage">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="City"
+        android:id="@+id/txtCityName"
+        android:gravity="center_horizontal"
+        android:textSize="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Current temp"
+        android:id="@+id/txtCurrentTemp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/txtCityName"
+        android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Min temp"
+            android:id="@+id/txtMinTemp"
+            android:layout_alignTop="@+id/txtCurrentTemp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Max temp"
+            android:id="@+id/txtMaxTemp"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignTop="@+id/txtCurrentTemp"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Wind speed"
+            android:id="@+id/textView"
+            android:layout_marginTop="148dp"
+            android:layout_below="@+id/txtCurrentTemp"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Current time"
+            android:id="@+id/textView2"
+            android:layout_marginBottom="82dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Sunrise"
+            android:id="@+id/textView3"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_alignRight="@+id/txtMinTemp"
+            android:layout_alignEnd="@+id/txtMinTemp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Sunset"
+            android:id="@+id/textView4"
+            android:layout_alignTop="@+id/textView2"
+            android:layout_alignLeft="@+id/txtMaxTemp"
+            android:layout_alignStart="@+id/txtMaxTemp" />
+</RelativeLayout>
+
+
