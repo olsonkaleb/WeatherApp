@@ -1,7 +1,6 @@
 package com.fakecompany.weatherapp;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,9 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class WeatherPage extends Fragment
 {
-    private OnFragmentInteractionListener mListener;
     public WeatherInfo info;
 
     public static WeatherPage newInstance()
@@ -37,43 +39,29 @@ public class WeatherPage extends Fragment
         return inflater.inflate(R.layout.fragment_weather_page, container, false);
     }
 
-    public void onButtonPressed(Uri uri)
-    {
-        if (mListener != null)
-        {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-
-        try
-        {
-            mListener = (OnFragmentInteractionListener) activity;
-        }
-        catch (ClassCastException e)
-        {
-            throw new ClassCastException(activity.toString() + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach()
     {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener
-    {
-        public void onFragmentInteraction(Uri uri);
     }
 
     public void updatePage()
     {
+        Date currentTime = new Date();
+        Date sunriseTime = new Date(info.sunrise * 1000);
+        Date sunsetTime = new Date(info.sunset * 1000);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm", Locale.US);
+        SimpleDateFormat markerFormat = new SimpleDateFormat("a", Locale.US);
+
         ((TextView) this.getView().findViewById(R.id.txtCityName)).setText(info.cityName);
+        ((TextView) this.getView().findViewById(R.id.txtSunrise)).setText("Sunrise\n" + timeFormat.format(sunriseTime));
+        ((TextView) this.getView().findViewById(R.id.txtSunset)).setText("Sunset\n" + timeFormat.format(sunsetTime));
+        ((TextView) this.getView().findViewById(R.id.txtCurrentTime)).setText(timeFormat.format(currentTime) + "\n" + markerFormat.format(currentTime));
     }
 }

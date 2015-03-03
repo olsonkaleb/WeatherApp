@@ -1,36 +1,23 @@
 package com.fakecompany.weatherapp;
 
-import android.net.Uri;
-import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 //API KEY: c888e616376f2d4854883d881a0e07d4
 //http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=c888e616376f2d4854883d881a0e07d4
 
-public class FrontPage extends ActionBarActivity implements WeatherPage.OnFragmentInteractionListener
+public class FrontPage extends ActionBarActivity
 {
-    public WeatherInfo currentInfo;
-    public List<WeatherPage> f = new ArrayList<WeatherPage>();
+    public ArrayList<WeatherPage> weatherPages = new ArrayList<WeatherPage>();
     public int[] cityIds = new int[] {5037649, 5045360};
 
     @Override
@@ -39,20 +26,18 @@ public class FrontPage extends ActionBarActivity implements WeatherPage.OnFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_front_page);
 
-        f.add(WeatherPage.newInstance());
-        f.add(WeatherPage.newInstance());
+        weatherPages.add(WeatherPage.newInstance());
+        weatherPages.add(WeatherPage.newInstance());
 
         for (int i = 0; i < cityIds.length; i++)
         {
             JsonRetriever retriever = new JsonRetriever();
-            retriever.linkedPage = f.get(i);
+            retriever.linkedPage = weatherPages.get(i);
             retriever.execute("http://api.openweathermap.org/data/2.5/weather?id=" + cityIds[i] + "&APPID=c888e616376f2d4854883d881a0e07d4");
         }
 
         ViewPager vp = (ViewPager) findViewById(R.id.vp_WeatherPager);
-        vp.setAdapter(new asd(getSupportFragmentManager(), f));
-
-        //new JsonRetriever().execute("http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=c888e616376f2d4854883d881a0e07d4");
+        vp.setAdapter(new WeatherPageAdapter(getSupportFragmentManager(), weatherPages));
     }
 
     @Override
@@ -73,16 +58,11 @@ public class FrontPage extends ActionBarActivity implements WeatherPage.OnFragme
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri)
-    {
-    }
-
-    public class asd extends FragmentStatePagerAdapter
+    public class WeatherPageAdapter extends FragmentStatePagerAdapter
     {
         public List<WeatherPage> pages;
 
-        public asd(FragmentManager fm, List<WeatherPage> _pages)
+        public WeatherPageAdapter(FragmentManager fm, List<WeatherPage> _pages)
         {
             super(fm);
             pages = _pages;
