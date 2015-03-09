@@ -66,9 +66,9 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
         android:text="Current time"
-        android:textSize="35dp"
+        android:textSize="40dp"
         android:id="@+id/txtCurrentTime"
-        android:layout_marginBottom="82dp"
+        android:layout_marginBottom="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"/>
@@ -80,9 +80,10 @@
         android:textColor="@color/white"
         android:text="Sunrise"
         android:id="@+id/txtSunrise"
-        android:layout_alignBottom="@+id/txtCurrentTime"
-        android:layout_alignRight="@+id/txtMinTemp"
-        android:layout_alignEnd="@+id/txtMinTemp"
+        android:layout_alignTop="@+id/txtCurrentTime"
+        android:layout_alignRight="@id/txtCurrentTime"
+        android:layout_marginRight="120dp"
+        android:layout_marginTop="35dp"
         android:gravity="center_horizontal"/>
 
     <TextView
@@ -92,13 +93,14 @@
         android:textColor="@color/white"
         android:text="Sunset"
         android:id="@+id/txtSunset"
-        android:layout_alignBottom="@+id/txtCurrentTime"
-        android:layout_alignLeft="@+id/txtMaxTemp"
-        android:layout_alignStart="@+id/txtMaxTemp"
+        android:layout_alignTop="@+id/txtCurrentTime"
+        android:layout_alignLeft="@id/txtCurrentTime"
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="35dp"
         android:gravity="center_horizontal"/>
 
     <com.fakecompany.weatherapp.DrawSpace
-        android:id="@+id/drwspcSunArc"
+        android:id="@+id/drawSpace"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
 </RelativeLayout>

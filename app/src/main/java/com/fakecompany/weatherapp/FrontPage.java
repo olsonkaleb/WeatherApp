@@ -3,6 +3,7 @@ package com.fakecompany.weatherapp;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -13,12 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 //API KEY: c888e616376f2d4854883d881a0e07d4
-//http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=c888e616376f2d4854883d881a0e07d4
 
 public class FrontPage extends ActionBarActivity
 {
     public ArrayList<WeatherPage> weatherPages = new ArrayList<WeatherPage>();
-    public int[] cityIds = new int[] {5037649, 5045360};
+    public int[] cityIds = new int[] {5037649, 5045360, 5128638};
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -26,6 +26,7 @@ public class FrontPage extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_front_page);
 
+        weatherPages.add(WeatherPage.newInstance());
         weatherPages.add(WeatherPage.newInstance());
         weatherPages.add(WeatherPage.newInstance());
 
@@ -78,6 +79,15 @@ public class FrontPage extends ActionBarActivity
         public int getCount()
         {
             return pages.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position)
+        {
+            if (pages.get(position).info.cityName != null)
+                return pages.get(position).info.cityName;
+            else
+                return "blah";
         }
     }
 }

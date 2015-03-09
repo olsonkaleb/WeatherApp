@@ -36,12 +36,6 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
 
     protected void onPostExecute(String json)
     {
-        parseJson(json);
-        linkedPage.updatePage();
-    }
-
-    public void parseJson(String json)
-    {
         try
         {
             JSONObject jObject = new JSONObject(json);
@@ -59,5 +53,10 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
         {
             Log.e("WeatherApp", "Error parsing JSON", e);
         }
+
+        linkedPage.jsonRetrieved = true;
+
+        if (linkedPage.isAdded())
+            linkedPage.updatePage();
     }
 }

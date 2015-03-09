@@ -1,11 +1,16 @@
 package com.fakecompany.weatherapp;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -15,16 +20,30 @@ import java.util.Locale;
 public class WeatherPage extends Fragment
 {
     public WeatherInfo info;
+    public DrawSpace drawSpace;
+    public boolean jsonRetrieved;
 
     public static WeatherPage newInstance()
     {
         WeatherPage newWeatherPage = new WeatherPage();
-        newWeatherPage.info = new WeatherInfo();
+        newWeatherPage.jsonRetrieved = false;
         return newWeatherPage;
     }
 
     public WeatherPage()
     {
+        info = new WeatherInfo();
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        drawSpace = (DrawSpace) getView().findViewById(R.id.drawSpace);
+        drawSpace.setParent(this);
+
+        if (jsonRetrieved)
+            updatePage();
     }
 
     @Override
@@ -57,11 +76,10 @@ public class WeatherPage extends Fragment
         Date sunriseTime = new Date(info.sunrise * 1000);
         Date sunsetTime = new Date(info.sunset * 1000);
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm", Locale.US);
-        SimpleDateFormat markerFormat = new SimpleDateFormat("a", Locale.US);
 
         ((TextView) this.getView().findViewById(R.id.txtCityName)).setText(info.cityName);
         ((TextView) this.getView().findViewById(R.id.txtSunrise)).setText("Sunrise\n" + timeFormat.format(sunriseTime));
         ((TextView) this.getView().findViewById(R.id.txtSunset)).setText("Sunset\n" + timeFormat.format(sunsetTime));
-        ((TextView) this.getView().findViewById(R.id.txtCurrentTime)).setText(timeFormat.format(currentTime) + "\n" + markerFormat.format(currentTime));
+        ((TextView) this.getView().findViewById(R.id.txtCurrentTime)).setText(timeFormat.format(currentTime));
     }
 }
