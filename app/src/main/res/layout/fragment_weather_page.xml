@@ -22,43 +22,55 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
+        android:textSize="100dp"
         android:text="Current temp"
         android:id="@+id/txtCurrentTemp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="30dp"
         android:layout_gravity="center_horizontal"
         android:layout_below="@+id/txtCityName"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentLeft="true"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
-        android:text="Min temp"
-        android:id="@+id/txtMinTemp"
-        android:layout_alignTop="@+id/txtCurrentTemp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/white"
-        android:text="Max temp"
-        android:id="@+id/txtMaxTemp"
+        android:textSize="30dp"
+        android:scrollHorizontally="false"
+        android:text="Cloudy"
+        android:id="@+id/txtWeatherDescription"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="20dp"
         android:layout_gravity="center_horizontal"
-        android:layout_alignTop="@+id/txtCurrentTemp"
-        android:layout_alignParentRight="true"/>
+        android:layout_toRightOf="@id/txtCurrentTemp"
+        android:layout_alignBottom="@id/txtCurrentTemp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:background="@color/white"
+        android:layout_below="@id/txtCurrentTemp"/>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
+        android:textSize="35dp"
         android:text="Wind speed"
         android:id="@+id/txtWindSpeed"
-        android:layout_marginTop="148dp"
-        android:layout_below="@+id/txtCurrentTemp"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/txtCurrentTemp"
         android:layout_centerHorizontal="true"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:background="@color/white"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/txtWindSpeed"/>
 
     <TextView
         android:layout_width="wrap_content"

@@ -43,9 +43,8 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
             linkedPage.info.country = jObject.getJSONObject("sys").getString("country");
             linkedPage.info.sunrise = jObject.getJSONObject("sys").getLong("sunrise");
             linkedPage.info.sunset = jObject.getJSONObject("sys").getLong("sunset");
-            linkedPage.info.currentTemp = jObject.getJSONObject("main").getDouble("temp");
-            linkedPage.info.minTemp = jObject.getJSONObject("main").getDouble("temp_min");
-            linkedPage.info.maxTemp = jObject.getJSONObject("main").getDouble("temp_max");
+            linkedPage.info.currentTemp = jObject.getJSONObject("main").getDouble("temp") - 273.15;
+            linkedPage.info.description = jObject.getJSONArray("weather").getJSONObject(0).getString("description");
             linkedPage.info.windSpeed = jObject.getJSONObject("wind").getDouble("speed");
             linkedPage.info.windDirection = jObject.getJSONObject("wind").getDouble("deg");
         }

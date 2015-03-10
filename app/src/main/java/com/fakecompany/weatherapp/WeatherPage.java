@@ -40,7 +40,7 @@ public class WeatherPage extends Fragment
     {
         super.onStart();
         drawSpace = (DrawSpace) getView().findViewById(R.id.drawSpace);
-        drawSpace.setParent(this);
+        drawSpace.parentPage = this;
 
         if (jsonRetrieved)
             updatePage();
@@ -77,9 +77,16 @@ public class WeatherPage extends Fragment
         Date sunsetTime = new Date(info.sunset * 1000);
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm", Locale.US);
 
+        ((TextView) this.getView().findViewById(R.id.txtCurrentTemp)).setText(String.valueOf(Math.round(info.currentTemp)) + "\u00b0");
+        ((TextView) this.getView().findViewById(R.id.txtWeatherDescription)).setText(info.description.substring(0, 1).toUpperCase() + info.description.substring(1));
+
+        ((TextView) this.getView().findViewById(R.id.txtWindSpeed)).setText("Light wind\nblowing Northeast");
+
         ((TextView) this.getView().findViewById(R.id.txtCityName)).setText(info.cityName);
         ((TextView) this.getView().findViewById(R.id.txtSunrise)).setText("Sunrise\n" + timeFormat.format(sunriseTime));
         ((TextView) this.getView().findViewById(R.id.txtSunset)).setText("Sunset\n" + timeFormat.format(sunsetTime));
         ((TextView) this.getView().findViewById(R.id.txtCurrentTime)).setText(timeFormat.format(currentTime));
+
+        drawSpace.update();
     }
 }
