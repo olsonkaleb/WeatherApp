@@ -7,6 +7,7 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -19,12 +20,15 @@ public class FrontPage extends ActionBarActivity
 {
     public ArrayList<WeatherPage> weatherPages = new ArrayList<WeatherPage>();
     public int[] cityIds = new int[] {5037649, 5045360, 5128638};
+    public int retrievedPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_front_page);
+
+        retrievedPages = 0;
 
         weatherPages.add(WeatherPage.newInstance());
         weatherPages.add(WeatherPage.newInstance());
@@ -33,12 +37,10 @@ public class FrontPage extends ActionBarActivity
         for (int i = 0; i < cityIds.length; i++)
         {
             JsonRetriever retriever = new JsonRetriever();
+            retriever.callbackActivity = this;
             retriever.linkedPage = weatherPages.get(i);
             retriever.execute("http://api.openweathermap.org/data/2.5/weather?id=" + cityIds[i] + "&APPID=c888e616376f2d4854883d881a0e07d4");
         }
-
-        ViewPager vp = (ViewPager) findViewById(R.id.vp_WeatherPager);
-        vp.setAdapter(new WeatherPageAdapter(getSupportFragmentManager(), weatherPages));
     }
 
     @Override
@@ -57,6 +59,12 @@ public class FrontPage extends ActionBarActivity
             return true;
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void assemblePages()
+    {
+        ViewPager vp = (ViewPager) findViewById(R.id.vp_WeatherPager);
+        vp.setAdapter(new WeatherPageAdapter(getSupportFragmentManager(), weatherPages));
     }
 
     public class WeatherPageAdapter extends FragmentStatePagerAdapter
@@ -84,10 +92,7 @@ public class FrontPage extends ActionBarActivity
         @Override
         public CharSequence getPageTitle(int position)
         {
-            if (pages.get(position).info.cityName != null)
-                return pages.get(position).info.cityName;
-            else
-                return "blah";
+            return pages.get(position).info.cityName;
         }
     }
 }

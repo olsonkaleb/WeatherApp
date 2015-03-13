@@ -1,5 +1,6 @@
 package com.fakecompany.weatherapp;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import java.net.URL;
 
 public class JsonRetriever extends AsyncTask<String, Void, String>
 {
+    public FrontPage callbackActivity;
     public WeatherPage linkedPage;
 
     protected String doInBackground(String... urls)
@@ -21,10 +23,11 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
         try
         {
             URL url = new URL(urls[0]);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String json = in.readLine();
-            in.close();
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            BufferedReader readIn = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String json = readIn.readLine();
+            readIn.close();
+
             return json;
         }
         catch(IOException e)
@@ -36,11 +39,12 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
 
     protected void onPostExecute(String json)
     {
+        //if json null return error message
+
         try
         {
             JSONObject jObject = new JSONObject(json);
             linkedPage.info.cityName = jObject.getString("name");
-            linkedPage.info.country = jObject.getJSONObject("sys").getString("country");
             linkedPage.info.sunrise = jObject.getJSONObject("sys").getLong("sunrise");
             linkedPage.info.sunset = jObject.getJSONObject("sys").getLong("sunset");
             linkedPage.info.currentTemp = jObject.getJSONObject("main").getDouble("temp") - 273.15;
@@ -57,5 +61,10 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
 
         if (linkedPage.isAdded())
             linkedPage.updatePage();
+
+        callbackActivity.retrievedPages++;
+
+        if (callbackActivity.retrievedPages == callbackActivity.cityIds.length)
+            callbackActivity.assemblePages();
     }
 }

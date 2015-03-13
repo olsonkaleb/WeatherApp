@@ -22,14 +22,11 @@ public class DrawSpace extends View
     WeatherPage parentPage;
     Paint paint;
     RectF sunRect;
-    Bitmap bitmap;
-    Point screenSize;
+    Bitmap sunIcon, moonIcon;
 
     public DrawSpace(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-
-        screenSize = new Point();
 
         paint = new Paint();
         paint.setColor(0xFFFFFFFF);
@@ -37,11 +34,8 @@ public class DrawSpace extends View
         paint.setStyle(Paint.Style.STROKE);
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
-        Resources res = getResources();
-        bitmap = BitmapFactory.decodeResource(res, R.drawable.ic_sun);
-
-        WindowManager winManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        winManager.getDefaultDisplay().getSize(screenSize);
+        sunIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_sun);
+        moonIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_moon);
     }
 
     @Override
@@ -51,34 +45,34 @@ public class DrawSpace extends View
 
         if (parentPage.jsonRetrieved)
         {
-            //canvas.drawCircle(screenSize.x - 200, screenSize.y / 2, 75, paint);
-            //paint.setStyle(Paint.Style.FILL);
-            //canvas.drawCircle(screenSize.x - 200, screenSize.y / 2, 10, paint);
-            //paint.setStyle(Paint.Style.STROKE);
-
-            //int a = (int) parentPage.info.windDirection;
-            //double xxx = Math.cos((Math.PI / 180) * a);
-            //double yyy = Math.sin((Math.PI / 180) * a);
-
-            //canvas.drawLine(screenSize.x - 200, screenSize.y / 2, (screenSize.x - 200) + (int) (xxx * 75), (screenSize.y / 2) + (int) (yyy * 75), paint);
-
             canvas.drawArc(sunRect, 180, 180, false, paint);
-            long dif = parentPage.info.sunset - parentPage.info.sunrise;
-            long current = ((new Date()).getTime() / 1000) - parentPage.info.sunrise;
-            double angle = 180 + (((double) current / (double) dif) * 180);
-            double xx = Math.cos((Math.PI / 180) * angle);
-            double yy = Math.sin((Math.PI / 180) * angle);
-            canvas.drawBitmap(bitmap, sunRect.centerX() + (int) (xx * (sunRect.width() / 2)) - (bitmap.getWidth() / 2), sunRect.centerY() + (int) (yy * (sunRect.height() / 2) - (bitmap.getHeight() / 2)), paint);
+
+            long currentTimeStamp = (new Date().getTime() / 1000);
+
+            if (currentTimeStamp > parentPage.info.sunrise && currentTimeStamp < parentPage.info.sunset)
+            {
+                double angle = Math.toRadians(180 + ((double) (currentTimeStamp - parentPage.info.sunrise) / (double) (parentPage.info.sunset - parentPage.info.sunrise)) * 180);
+                int iconX = (int) (sunRect.centerX() + (Math.cos(angle) * (sunRect.width() / 2)) - (sunIcon.getWidth() / 2));
+                int iconY = (int) (sunRect.centerY() + (Math.sin(angle) * (sunRect.height() / 2)) - (sunIcon.getHeight() / 2));
+                canvas.drawBitmap(sunIcon, iconX, iconY, paint);
+            }
+            else
+            {
+                double angle = Math.toRadians(180 + (((currentTimeStamp - parentPage.info.sunset) / (86400 - (parentPage.info.sunset - parentPage.info.sunrise))) * 180));
+                int iconX = (int) (sunRect.centerX() + (Math.cos(angle) * (sunRect.width() / 2)) - (moonIcon.getWidth() / 2));
+                int iconY = (int) (sunRect.centerY() + (Math.sin(angle) * (sunRect.height() / 2)) - (moonIcon.getHeight() / 2));
+                canvas.drawBitmap(moonIcon, iconX, iconY, paint);
+            }
         }
     }
 
-    public void update()
+    public void createArc()
     {
-        View left = parentPage.getView().findViewById(R.id.txtSunrise);
-        View right = parentPage.getView().findViewById(R.id.txtSunset);
-        int a = (right.getLeft() + (right.getWidth() / 2)) - (left.getLeft() + (left.getWidth() / 2));
+        View sunriseView = parentPage.getView().findViewById(R.id.txtSunrise);
+        View sunsetView = parentPage.getView().findViewById(R.id.txtSunset);
 
-        sunRect = new RectF(left.getLeft() + (left.getWidth() / 2), left.getTop() - (a / 3), right.getLeft() + (right.getWidth() / 2), left.getTop() + (a / 3));
+        int heightRadius = ((sunsetView.getLeft() + (sunsetView.getWidth() / 2)) - (sunriseView.getLeft() + (sunriseView.getWidth() / 2))) / 3;
+        sunRect = new RectF(sunriseView.getLeft() + (sunriseView.getWidth() / 2), sunriseView.getTop() - heightRadius, sunsetView.getLeft() + (sunsetView.getWidth() / 2), sunriseView.getTop() + heightRadius);
 
         invalidate();
     }

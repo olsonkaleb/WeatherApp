@@ -40,13 +40,13 @@
         android:scrollHorizontally="false"
         android:text="Cloudy"
         android:id="@+id/txtWeatherDescription"
-        android:layout_marginLeft="15dp"
         android:layout_marginBottom="20dp"
         android:layout_gravity="center_horizontal"
         android:layout_toRightOf="@id/txtCurrentTemp"
         android:layout_alignBottom="@id/txtCurrentTemp"/>
 
     <View
+        android:id="@+id/viewSpacer1"
         android:layout_width="fill_parent"
         android:layout_height="3dp"
         android:background="@color/white"
@@ -66,24 +66,22 @@
         android:layout_centerHorizontal="true"/>
 
     <View
+        android:id="@+id/viewSpacer2"
         android:layout_width="fill_parent"
         android:layout_height="3dp"
         android:background="@color/white"
         android:layout_marginTop="20dp"
         android:layout_below="@id/txtWindSpeed"/>
 
-    <TextView
+    <TextClock
+        android:id="@+id/txtclockCurrentTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/white"
-        android:text="Current time"
         android:textSize="40dp"
-        android:id="@+id/txtCurrentTime"
         android:layout_marginBottom="50dp"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"/>
+        android:layout_alignParentBottom="true"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -92,8 +90,8 @@
         android:textColor="@color/white"
         android:text="Sunrise"
         android:id="@+id/txtSunrise"
-        android:layout_alignTop="@+id/txtCurrentTime"
-        android:layout_alignRight="@id/txtCurrentTime"
+        android:layout_alignTop="@+id/txtclockCurrentTime"
+        android:layout_alignRight="@id/txtclockCurrentTime"
         android:layout_marginRight="120dp"
         android:layout_marginTop="35dp"
         android:gravity="center_horizontal"/>
@@ -105,8 +103,8 @@
         android:textColor="@color/white"
         android:text="Sunset"
         android:id="@+id/txtSunset"
-        android:layout_alignTop="@+id/txtCurrentTime"
-        android:layout_alignLeft="@id/txtCurrentTime"
+        android:layout_alignTop="@+id/txtclockCurrentTime"
+        android:layout_alignLeft="@id/txtclockCurrentTime"
         android:layout_marginLeft="120dp"
         android:layout_marginTop="35dp"
         android:gravity="center_horizontal"/>
@@ -115,4 +113,5 @@
         android:id="@+id/drawSpace"
         android:layout_height="match_parent"
         android:layout_width="match_parent"/>
+
 </RelativeLayout>
