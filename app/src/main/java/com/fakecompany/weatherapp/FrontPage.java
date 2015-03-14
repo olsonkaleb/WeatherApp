@@ -1,26 +1,25 @@
 package com.fakecompany.weatherapp;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerTabStrip;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
-//API KEY: c888e616376f2d4854883d881a0e07d4
-
-public class FrontPage extends ActionBarActivity
+public class FrontPage extends Activity
 {
-    public ArrayList<WeatherPage> weatherPages = new ArrayList<WeatherPage>();
-    public int[] cityIds = new int[] {5037649, 5045360, 5128638};
-    public int retrievedPages;
+    private String MINNEAPOLIS_URL = "http://api.openweathermap.org/data/2.5/weather?id=5037649&APPID=4aec2bbf4928ecf73243f827357d7799";
+
+    public WeatherInfo currentWeatherInfo;
+    public DrawSpace drawSpace;
+    public boolean jsonRetrieved;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,71 +27,101 @@ public class FrontPage extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_front_page);
 
-        retrievedPages = 0;
+        setVisibility(View.INVISIBLE);
 
-        weatherPages.add(WeatherPage.newInstance());
-        weatherPages.add(WeatherPage.newInstance());
-        weatherPages.add(WeatherPage.newInstance());
+        currentWeatherInfo = new WeatherInfo();
+        drawSpace = (DrawSpace) findViewById(R.id.drawSpace);
+        drawSpace.parentActivity = this;
+        jsonRetrieved = false;
 
-        for (int i = 0; i < cityIds.length; i++)
-        {
-            JsonRetriever retriever = new JsonRetriever();
-            retriever.callbackActivity = this;
-            retriever.linkedPage = weatherPages.get(i);
-            retriever.execute("http://api.openweathermap.org/data/2.5/weather?id=" + cityIds[i] + "&APPID=c888e616376f2d4854883d881a0e07d4");
-        }
+        JsonRetriever retriever = new JsonRetriever();
+        retriever.callbackActivity = this;
+        retriever.execute(MINNEAPOLIS_URL);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
+    public void updatePage()
     {
-        getMenuInflater().inflate(R.menu.menu_front_page, menu);
-        return true;
+        Date currentTime = new Date();
+        Date sunriseTime = new Date(currentWeatherInfo.sunrise * 1000);
+        Date sunsetTime = new Date(currentWeatherInfo.sunset * 1000);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm", Locale.US);
+
+        ((TextView) findViewById(R.id.txtCityName)).setText(currentWeatherInfo.cityName);
+
+        ((TextView) findViewById(R.id.txtCurrentTemp)).setText(String.valueOf(Math.round(currentWeatherInfo.currentTemp)) + "\u00b0");
+        ((TextView) findViewById(R.id.txtWeatherDescription)).setText(currentWeatherInfo.description.substring(0, 1).toUpperCase() + currentWeatherInfo.description.substring(1));
+
+        ((TextView) findViewById(R.id.txtWindSpeed)).setText(getWindDescription());
+
+        if (currentTime.after(sunriseTime) && currentTime.before(sunsetTime))
+        {
+            ((TextView) findViewById(R.id.txtSunrise)).setText("Sunrise\n" + timeFormat.format(sunriseTime));
+            ((TextView) findViewById(R.id.txtSunset)).setText("Sunset\n" + timeFormat.format(sunsetTime));
+        }
+        else
+        {
+            ((TextView) findViewById(R.id.txtSunrise)).setText("Sunset\n" + timeFormat.format(sunsetTime));
+            ((TextView) findViewById(R.id.txtSunset)).setText("Sunrise\n" + timeFormat.format(sunriseTime));
+        }
+
+        drawSpace.createArc();
+        setVisibility(View.VISIBLE);
+        findViewById(R.id.pbarLoadingDisplay).setVisibility(View.INVISIBLE);
+        findViewById(R.id.txtLoadingText).setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    public void retryConnection()
     {
-        int id = item.getItemId();
+        ((TextView)findViewById(R.id.txtLoadingText)).setText("Connection failed, retrying...");
 
-        if (id == R.id.action_settings)
-            return true;
-
-        return super.onOptionsItemSelected(item);
+        JsonRetriever retriever = new JsonRetriever();
+        retriever.callbackActivity = this;
+        retriever.execute(MINNEAPOLIS_URL);
     }
 
-    public void assemblePages()
+    public String getWindDescription()
     {
-        ViewPager vp = (ViewPager) findViewById(R.id.vp_WeatherPager);
-        vp.setAdapter(new WeatherPageAdapter(getSupportFragmentManager(), weatherPages));
+        StringBuilder builder = new StringBuilder();
+
+        if (currentWeatherInfo.windSpeed > 10)
+            builder.append("Heavy wind\n");
+        else if (currentWeatherInfo.windSpeed > 5)
+            builder.append("Moderate wind\n");
+        else if (currentWeatherInfo.windSpeed > 1)
+            builder.append("Light wind\n");
+        else
+            builder.append("Very light wind\n");
+
+        if (currentWeatherInfo.windDirection > 338 || currentWeatherInfo.windDirection < 23)
+            builder.append("Blowing East");
+        else if (currentWeatherInfo.windDirection > 293)
+            builder.append("Blowing Northeast");
+        else if (currentWeatherInfo.windDirection > 248)
+            builder.append("Blowing North");
+        else if (currentWeatherInfo.windDirection > 203)
+            builder.append("Blowing Northwest");
+        else if (currentWeatherInfo.windDirection > 158)
+            builder.append("Blowing West");
+        else if (currentWeatherInfo.windDirection > 113)
+            builder.append("Blowing Southwest");
+        else if (currentWeatherInfo.windDirection > 68)
+            builder.append("Blowing South");
+        else if (currentWeatherInfo.windDirection >= 23)
+            builder.append("Blowing Southeast");
+
+        return builder.toString();
     }
 
-    public class WeatherPageAdapter extends FragmentStatePagerAdapter
+    public void setVisibility(int visibility)
     {
-        public List<WeatherPage> pages;
-
-        public WeatherPageAdapter(FragmentManager fm, List<WeatherPage> _pages)
-        {
-            super(fm);
-            pages = _pages;
-        }
-
-        @Override
-        public Fragment getItem(int position)
-        {
-            return pages.get(position);
-        }
-
-        @Override
-        public int getCount()
-        {
-            return pages.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position)
-        {
-            return pages.get(position).info.cityName;
-        }
+        findViewById(R.id.txtCityName).setVisibility(visibility);
+        findViewById(R.id.txtCurrentTemp).setVisibility(visibility);
+        findViewById(R.id.txtWeatherDescription).setVisibility(visibility);
+        findViewById(R.id.txtWindSpeed).setVisibility(visibility);
+        findViewById(R.id.txtclockCurrentTime).setVisibility(visibility);
+        findViewById(R.id.txtSunrise).setVisibility(visibility);
+        findViewById(R.id.txtSunset).setVisibility(visibility);
+        findViewById(R.id.viewSpacer1).setVisibility(visibility);
+        findViewById(R.id.viewSpacer2).setVisibility(visibility);
     }
 }
