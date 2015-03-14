@@ -1,8 +1,23 @@
 <resources>
 
-    <string name="app_name">WeatherApp</string>
+    <string name="app_name">Weather</string>
     <string name="action_settings">Settings</string>
     <string name="retrieving_data">Retrieving weather data&#8230;</string>
+    <string name="retrieving_data_retry">Connection failed, retrying&#8230;</string>
     <string name="menu_option_metric">Use metric</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="wind_speed_very_light">Very light wind</string>
+    <string name="wind_speed_light">Light wind</string>
+    <string name="wind_speed_moderate">Moderate wind</string>
+    <string name="wind_speed_heavy">Heavy wind</string>
+    <string name="wind_direction_north">Blowing North</string>
+    <string name="wind_direction_northeast">Blowing Northeast</string>
+    <string name="wind_direction_east">Blowing East</string>
+    <string name="wind_direction_southeast">Blowing Southeast</string>
+    <string name="wind_direction_south">Blowing South</string>
+    <string name="wind_direction_southwest">Blowing Southwest</string>
+    <string name="wind_direction_west">Blowing West</string>
+    <string name="wind_direction_northwest">Blowing Northwest</string>
 
 </resources>

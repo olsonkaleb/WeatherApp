@@ -11,10 +11,8 @@
         android:label="@string/app_name"
         android:theme="@style/MainTheme">
 
-        <uses-sdk android:targetSdkVersion="13"/>
-
         <activity
-            android:name=".FrontPage"
+            android:name="com.fakecompany.weather.FrontPage"
             android:label="@string/app_name"
             android:theme="@style/MainTheme"
             android:screenOrientation="portrait">

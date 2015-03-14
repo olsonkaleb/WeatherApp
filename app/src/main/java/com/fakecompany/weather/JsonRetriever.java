@@ -1,22 +1,19 @@
-package com.fakecompany.weatherapp;
+package com.fakecompany.weather;
 
 import android.os.AsyncTask;
-import android.util.JsonReader;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 
+//This class is used to connect to the OpenWeatherMap API and
+//parse the retrieved JSON back into a WeatherInfo object
 public class JsonRetriever extends AsyncTask<String, Void, String>
 {
     public FrontPage callbackActivity;
@@ -32,6 +29,7 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
 
             String newLine;
             StringBuilder stringBuilder = new StringBuilder();
+
             while ((newLine = readIn.readLine()) != null)
                 stringBuilder.append(newLine);
 
@@ -48,12 +46,14 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
 
     protected void onPostExecute(String json)
     {
+        //If the connection timed out and a null string was returned then retry connection
         if (json == null)
         {
             callbackActivity.retryConnection();
             return;
         }
 
+        //Otherwise parse the string into a WeatherInfo object and display it
         try
         {
             JSONObject jObject = new JSONObject(json);
@@ -65,13 +65,13 @@ public class JsonRetriever extends AsyncTask<String, Void, String>
             callbackActivity.currentWeatherInfo.description = jObject.getJSONArray("weather").getJSONObject(0).getString("description");
             callbackActivity.currentWeatherInfo.windSpeed = jObject.getJSONObject("wind").getDouble("speed");
             callbackActivity.currentWeatherInfo.windDirection = jObject.getJSONObject("wind").getDouble("deg");
+
+            callbackActivity.showWeatherInfo();
         }
         catch (JSONException e)
         {
             Log.e("WeatherApp", "Error parsing JSON", e);
+            callbackActivity.retryConnection();
         }
-
-        callbackActivity.jsonRetrieved = true;
-        callbackActivity.updatePage();
     }
 }

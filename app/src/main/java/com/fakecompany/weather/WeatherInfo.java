@@ -1,4 +1,4 @@
-package com.fakecompany.weatherapp;
+package com.fakecompany.weather;
 
 public class WeatherInfo
 {

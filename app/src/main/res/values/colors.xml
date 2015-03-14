@@ -2,7 +2,4 @@
 <resources>
     <color name="main_color">#FF149FBA</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="temperature">#FFEB4949</color>
-    <color name="wind">#FF62B359</color>
-    <color name="sun">#FFE8B341</color>
 </resources>
